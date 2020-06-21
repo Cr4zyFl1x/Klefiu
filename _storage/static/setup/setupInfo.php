@@ -1,0 +1,5 @@
+<?php
+
+$setup = [
+    'exited' => false
+];
