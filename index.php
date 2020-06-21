@@ -23,7 +23,7 @@ require_once '_storage/static/setup/setupInfo.php';
 |
 */
 
-if ($setup['exited'])  header('Location: ' . (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . 'setup.php');
+if (!$setup['exited'])  header('Location: ' . (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . 'setup.php');
 
 
 /*
