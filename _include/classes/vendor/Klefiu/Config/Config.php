@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Klefiu;
+namespace Klefiu\App;
 
 
 class Config
