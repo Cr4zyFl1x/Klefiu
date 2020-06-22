@@ -1,24 +1,27 @@
 <?php
 
-use Klefiu\SiteManager;
-
-$siteManager = new SiteManager();
-
 // Public
-$siteManager->setSiteFile('/', '_pages/public/home.ctp');
-$siteManager->setSiteFile('/login', '_pages/public/login.ctp');
-$siteManager->setSiteFile('/register', '_pages/public/register.ctp');
+$app->siteManager->setSiteFile('/', '_pages/public/home.ctp');
+$app->siteManager->setSiteFile('/login', '_pages/public/login.ctp');
+$app->siteManager->setSiteFile('/password', '_pages/public/password.ctp');
+
 
 // Private
-$siteManager->setSiteFile('/app', '_pages/private/dashboard.ctp');
+$app->siteManager->setSiteFile('/app', '_pages/private/dashboard.ctp');
+
+// Development
+$app->siteManager->setSiteFile('/dev/test', '_pages/development/test.ctp');
 
 // Error Sites
-$siteManager->setErrorFiles(404, '_pages/public/404.php');
-$siteManager->setErrorFiles(500, '_pages/public/500.php');
-$siteManager->setErrorFiles(403, '_pages/public/403.php');
+$app->siteManager->setErrorFiles(404, '_pages/public/404.ctp');
+$app->siteManager->setErrorFiles(500, '_pages/public/500.php');
+$app->siteManager->setErrorFiles(403, '_pages/public/403.php');
+
+
+$app->siteManager->setSiteFile('test', 'test');
 
 // Finally include site file
-require_once $siteManager->getSiteFile();
+require_once $app->siteManager->getSiteFile();
 
 
 
