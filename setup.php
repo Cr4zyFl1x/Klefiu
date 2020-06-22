@@ -9,23 +9,34 @@ $pagePath = $_GET['path'];
 $setupFile = '_storage/static/setup/setupInfo.php';
 
 
-if (!isset($pagePath) || empty($pagePath)) { $pagePath = "/setup"; }
-if (!isset($setup['path'])) { $setup['path'] = "/setup"; }
+if (!isset($setup['lastPathUpdate'])) {
+    $setup = [
+        'path' => '/setup',
+        'lastPathUpdate' => date('Y-m-d H:i'),
+        'logoPath' => '_assets/vendor/lavalite/img/brand.svg'
+    ];
+}
 
-
-if ($pData = $_GET['updatePath']) {
-    $data = array(  "setup['path']" => $pData,
-        "setup['lastPathUpdate']" => date('Y-m-d H:i'),
-        "setup['timezone']" => $timezone,
-        "setup['logoPath']" => '_assets/vendor/lavalite/img/brand.svg',
-        "setup['finished']" => false);
+if (($pData = $_GET['updatePath']) && !$setup['exited']) {
+    $data = [
+        "setup" => [
+            'path' => $pData,
+            'lastPathUpdate' => date('Y-m-d H:i'),
+            'timezone' => $timezone,
+            'logoPath' => '_assets/vendor/lavalite/img/brand.svg',
+            'exited' => false
+        ]];
     updateSetupFile($setupFile, $data);
     $setup['path'] = $pData;
 }
 
 
 if (isset($_GET['setupFinished'])) {
-    $data = array(  "setup['exited']" => true);
+    $data = [
+        "setup" => [
+            'lastPathUpdate' => date('Y-m-d H:i'),
+            'exited' => true
+        ]];
     updateSetupFile($setupFile, $data);
     $loc = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
     header('Location:' . $loc);
@@ -53,7 +64,7 @@ $siteManager = array(
 
 
 // Load site
-if (!$setup['finished']) {
+if (!$setup['exited']) {
     if (array_key_exists($pagePath, $siteManager)) {
         $arrayKey       = $pagePath;
         $siteFilePath   = $siteManager[$arrayKey];
@@ -63,7 +74,6 @@ if (!$setup['finished']) {
         die('Site not found :(');
     }
 } else {
-    require_once '_inc/functions/functions.settings.inc.php';
     $loc = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
     header('Location:' . $loc);
 }
