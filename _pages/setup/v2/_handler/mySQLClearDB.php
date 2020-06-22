@@ -1,9 +1,12 @@
 <?php
 error_reporting(0);
+use Klefiu\App\SQL;
+use Klefiu\App\Config;
 
 // CLEARING DATABASE
-$result[0] = $pdo->prepare("DROP DATABASE " . $conn['db_name'])->execute();
-$result[1] = $pdo->prepare("CREATE DATABASE " . $conn['db_name'])->execute();
+$result = [];
+$result[0] = SQL::getPDO()->prepare("DROP DATABASE " . Config::read('db_name'))->execute();
+$result[1] = SQL::getPDO()->prepare("CREATE DATABASE " . Config::read('db_name'))->execute();
 
 if (!$result[0] || !$result[1]) {
     $error[0] = true;

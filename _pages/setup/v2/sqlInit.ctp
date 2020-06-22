@@ -14,7 +14,7 @@ require_once '_handler/mySQLInit.php';
         <!-- // CONTENT // -->
         <div class="container">
             <div class="py-5 text-center">
-                <img class="d-block mx-auto mb-4" src="<?php echo $setupConfig['logoPath']; ?>" alt="Logo">
+                <img class="d-block mx-auto mb-4" height="50" width="50" src="<?php echo $setup['logoPath']; ?>" alt="Logo">
                 <h2>MySQL database initialization</h2>
             </div>
             <div class="py-2 text-left">
