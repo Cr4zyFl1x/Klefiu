@@ -2,7 +2,7 @@
 $error = false;
 $run = false;
 $form = array();
-use Klefiu\Config;
+use Klefiu\App\Config;
 error_reporting(0);
 
 $form['db_host'] = "127.0.0.1";

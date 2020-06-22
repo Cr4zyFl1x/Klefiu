@@ -12,7 +12,7 @@
             <div class="h-100 row">
                 <div class="col my-auto">
                     <div class="py-5 text-center">
-                        <img class="d-block mx-auto mb-4" src="<?php echo $setupConfig['logoPath']; ?>" alt="Logo">
+                        <img class="d-block mx-auto mb-4" height="50" width="50" src="<?php echo $setup['logoPath']; ?>" alt="Logo">
                         <h2>Setup finished!</h2>
                         <p class="lead">Setup completed! The panel is now ready to use!</p>
                         <br><br><br>

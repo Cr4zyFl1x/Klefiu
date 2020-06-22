@@ -17,7 +17,7 @@ require_once '_handler/configurationSaver.php';
         <!-- // CONTENT // -->
         <div class="container">
             <div class="py-5 text-center">
-                <img class="d-block mx-auto mb-4" src="<?php echo $setupConfig['logoPath']; ?>" alt="Logo">
+                <img class="d-block mx-auto mb-4" height="50" width="50" src="<?php echo $setup['logoPath']; ?>" alt="Logo">
                 <h2>Basic configuration</h2>
                 <p class="lead">Please configure the panel settings below to continue with setup.</p>
             </div>
