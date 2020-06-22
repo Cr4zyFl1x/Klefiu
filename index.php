@@ -9,7 +9,10 @@
 |
 */
 
+use Klefiu\App;
 require_once '_storage/static/setup/setupInfo.php';
+require_once '_include/classes/autoload.php';
+require_once '_include/config/mySQL.php';
 
 
 /*
@@ -36,6 +39,6 @@ if (!$setup['exited'])  header('Location: ' . (!empty($_SERVER['HTTPS']) ? 'http
 |
 */
 
+$app = new App();
+$app->run();
 require_once '_include/initialize.php';
-
-
