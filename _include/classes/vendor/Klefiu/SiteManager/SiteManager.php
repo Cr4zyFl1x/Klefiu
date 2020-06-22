@@ -1,10 +1,7 @@
 <?php
 
 
-namespace Klefiu;
-
-
-use Klefiu\SiteManager\SiteLoad;
+namespace Klefiu\App;
 
 class SiteManager
 {
