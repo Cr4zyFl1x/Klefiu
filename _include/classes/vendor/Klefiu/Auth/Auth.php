@@ -26,32 +26,30 @@ class Auth
 
         if ($userData !== null && password_verify($password, $userData['password'])) {
 
-            if ($this->checkForIPBan($_SERVER['REMOTE_ADDR'], $userData['ID'])) {
+            if ($this->checkLogin()) {
+                $error = true;
+                $return['data']['error'] = "alreadyloggedin";
+                $return['data']['success'] = false;
+            }
+
+            if (!$error && $this->checkForIPBan($_SERVER['REMOTE_ADDR'], $userData['ID'])) {
                 $error = true;
                 $return['data']['error'] = 'ipbanned';
                 $return['data']['success'] = false;
             }
 
-            if (!$error && $rememberme) {
-                $identityToken = sha1(rand(5, 50000000));
-                $secureToken = sha1(rand(5, 50000000));
-
-                $setToken = SQL::getPDO()->prepare("INSERT INTO " . Config::read('db_prefix') . "reloginTokens (userID, identityToken, secureToken) VALUES (:uID, :iT, :sT)");
-                $setToken->execute(['uID' => $userData['ID'], 'iT' => $identityToken, 'sT' => sha1($secureToken)]);
-
-                setcookie("KLEFIU_identityToken", $identityToken, time()+(3600*24*365), '/');
-                setcookie("KLEFIU_secureToken", $secureToken, time()+(3600*24*365), '/');
-            }
-
             if (!$error) {
-                $_SESSION['userID'] = $userData['ID'];
                 $lastLoginAt = SQL::getPDO()->prepare("UPDATE ".Config::read('db_prefix')."users SET lastLoginAt = NOW() WHERE id = ?");
                 $lastLoginAt->execute([$userData['ID']]);
+                $session = $this->createSession($userData['ID'], $rememberme);
+
+                $_SESSION['userID'] = $userData['ID'];
+                $_SESSION['sessionToken'] = $session['data']['sessionToken'];
+
                 $return['data']['error'] = null;
                 $return['data']['success'] = true;
+                $return['data']['sessionToken'] = $session['data']['sessionToken'];
             }
-
-
         } else {
             $return['data']['error'] = 'invalidcredentials';
             $return['data']['success'] = false;
@@ -60,31 +58,127 @@ class Auth
         return $return;
     }
 
-    public function userLoginToken($identityToken, $secureToken)
+    public function userLogout()
     {
-        $return = ['data' => ['error' => [], 'success' => false]];
-
-        $statement = SQL::getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "reloginTokens WHERE identityToken = ?");
-        $statement->execute([$identityToken]);
-        $fetch = $statement->fetch();
-
-        if ($fetch !== null && $fetch['secureToken'] == sha1($secureToken)) {
-            $_SESSION['userID'] = $fetch['userID'];
-            $lastLoginAt = SQL::getPDO()->prepare("UPDATE ".Config::read('db_prefix')." users SET lastLoginAt = NOW() WHERE id = ?");
-            $lastLoginAt->execute([$fetch['userID']]);
-            $return['data']['error'] = null;
-            $return['data']['success'] = true;
-            return $return;
+        $sessionToken = $_COOKIE['KLEFIU_loginSession'];
+        if ($this->checkLogin()) {
+            setcookie("KLEFIU_loginSession", $sessionToken, time()-(3600*24*365), '/');
+            session_destroy();
+            $status = $this->deleteSession($sessionToken);
+            return [
+                'data' => [
+                    'success' => $status['data']['success']
+                ]
+            ];
         }
-        $return['data']['error'] = 'nokeymatch';
-        $return['data']['success'] = false;
-        return $return;
+        return [
+            'data' => [
+                'success' => false,
+                'error' => 'notloggedin'
+            ]
+        ];
     }
 
-    public function userLogout($session = null)
+
+
+    private function createSession($userID, $rememberme)
     {
+        $sessionToken = sha1(rand(5, 50000000));
+        $sessionTime = ($rememberme) ? time()+(3600*24*365) : 0;
+        $sessionValidity = ($rememberme) ? (3600*24*365) : (3600*2);
 
+        $statement = SQL::getPDO()->prepare("INSERT INTO " . Config::read('db_prefix') . "loginSessions (userID, sessionToken, userAgent, operatingSystem, ipAddress, sessionValidity) VALUES (:uID, :sT, :uA, :oS, :ip, :sV)");
+        $result = $statement->execute(['uID' => $userID, 'sT' => sha1($sessionToken), 'uA' => Func::getUserAgent(), 'oS' => Func::getOperatingSystem(), 'ip' => Func::getUserIP(), 'sV' => $sessionValidity]);
+        if ($result) {
+            setcookie("KLEFIU_loginSession", $sessionToken, $sessionTime, '/');
+            return [
+                'data' => [
+                    'error' => null,
+                    'success' => true,
+                    'sessionToken' => $sessionToken
+                ]
+            ];
+        }
+        return [
+            'data' => [
+                'error' => 'sessioncreatefailed',
+                'success' => false,
+            ]
+        ];
     }
+
+    public function deleteSession($session)
+    {
+        if ($this->sessionExists($session)) {
+            $statement = SQL::getPDO()->prepare("DELETE FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
+            $result = $statement->execute([sha1($session)]);
+            return [
+                'data' => [
+                    'error' => null,
+                    'success' => true
+                ]
+            ];
+        }
+        return [
+            'data' => [
+                'error' => 'sessionnotfound',
+                'success' => false
+            ]
+        ];
+    }
+
+    private function sessionExists($session)
+    {
+        $statement = SQL::getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
+        $result = $statement->execute([sha1($session)]);
+        $data = $statement->fetch();
+        if ($data == null) return false;
+        return true;
+    }
+
+    private function getSession($sessionToken)
+    {
+        $statement = SQL::getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
+        $result = $statement->execute([sha1($sessionToken)]);
+        return $statement->fetch();
+    }
+
+    private function sessionIsValid($sessionToken)
+    {
+        if (($this->getSession($sessionToken)['sessionValidity'] + strtotime($this->getSession($sessionToken)['createdAt'])) > time()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getUser()
+    {
+        if (!$this->checkLogin())
+        {
+            return [
+                'data' => [
+                    'success' => false,
+                    'error' => 'notloggedin'
+                ]
+            ];
+        }
+        return new User($_SESSION['userID']);
+    }
+
+
+
+    public function checkLogin()
+    {
+        if (isset($_SESSION['userID']) || $this->sessionIsValid($_COOKIE['KLEFIU_loginSession'])) {
+            $userID = $this->getSession($_COOKIE['KLEFIU_loginSession'])['userID'];
+            if (!empty($userID)) {
+                $_SESSION['userID'] = $userID;
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public function checkForIPBan($ip, $userID)
     {
