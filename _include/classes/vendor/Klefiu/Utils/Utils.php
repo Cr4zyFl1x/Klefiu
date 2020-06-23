@@ -13,13 +13,18 @@ class Utils
         $this->pdo = SQL::getPDO();
     }
 
-    public function getPanelURL()
+    public function getPanelSSL()
     {
         if (SQL::getSetting('panel_domainSSL') == "true") {
-            $url = "https://";
+            return "https://";
         } else {
-            $url = "http://";
+            return "http://";
         }
+    }
+
+    public function getPanelURL()
+    {
+        $url = $this->getPanelSSL();
         $url .= $this->getPanelDomain();
         $url .= $this->getPanelPath();
         return $url;
@@ -44,6 +49,10 @@ class Utils
         return SQL::getSetting('panel_localeLanguage');
     }
 
+    public function getReturnURL()
+    {
+        return $this->getPanelSSL() . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    }
 
 
 
