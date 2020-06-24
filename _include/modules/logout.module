@@ -1,0 +1,18 @@
+<?php
+
+if ($app->auth()->checkLogin()) {
+    if ($app->auth()->userLogout()) {
+        header('Location: ' . $app->utils()->getPanelURL() . 'login?action=logout');
+    }
+
+    else if (isset($_SERVER['HTTP_REFERER'])) {
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+    }
+
+    else {
+        header('Location: ' . $app->utils()->getPanelURL() . 'app');
+    }
+} else {
+    header('Location: ' . $app->utils()->getPanelURL() . 'login');
+}
+

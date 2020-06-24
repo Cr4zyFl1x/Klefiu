@@ -1,0 +1,46 @@
+<?php
+$statusMsg = false;
+
+if ($app->auth()->checkLogin()) {
+    header('Location: ' . $app->utils()->getPanelURL() . 'app');
+}
+
+if ($_GET['action'] == "noLogin") {
+    $statusMsg = true;
+    $form['status'] = "<div class=\"alert alert-info\" role=\"alert\">".$lng['error']['login_needed']."</div>";
+}
+
+if ($_GET['action'] == "logout") {
+    $statusMsg = true;
+    $form['status'] = "<div class=\"alert alert-success\" role=\"alert\">".$lng['success']['logout']."</div>";
+}
+
+if ($_GET['action'] == "sessionExpired") {
+    $statusMsg = true;
+    $form['status'] = "<div class=\"alert alert-warning\" role=\"alert\">".$lng['error']['sessionexpired']."</div>";
+}
+
+if ($_GET['action'] == "passwordResetted") {
+    $statusMsg = true;
+    $form['status'] = "<div class=\"alert alert-success\" role=\"alert\">".$lng['success']['passwordreset']."</div>";
+}
+
+if ($_GET['handler'] == 'login') {
+    $form = [
+        'status' => null,
+        'username' => trim($_POST['username']),
+        'password' => $_POST['password'],
+        'rememberme' => ($_POST['rememberme'] == "true")
+    ];
+    $login = $app->auth()->userLogin($form['username'], $form['password'], $form['rememberme']);
+    if ($login['data']['success']) {
+        if (isset($_GET['next']) || !empty($_GET['next'])) {
+            header('Location: ' . $_GET['next']);
+        } else {
+            header('Location: ' . $app->utils()->getPanelURL() . 'app');
+        }
+    } else {
+        $statusMsg = true;
+        $form['status'] = "<div class=\"alert alert-danger\" role=\"alert\">".$lng['error']['login']."</div>";
+    }
+}

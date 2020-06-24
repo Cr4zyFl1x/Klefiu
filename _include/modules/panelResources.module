@@ -1,0 +1,30 @@
+<?php
+
+function checkLogin() {
+    global $app;
+
+    if ($app->auth()->checkLogin()) {
+        return $app->auth()->getUser();
+    } else {
+        if (isset($_COOKIE['KLEFIU_loginSession']) && !empty($_COOKIE['KLEFIU_loginSession'])) {
+            $app->auth()->deleteSession($_COOKIE['KLEFIU_loginSession']);
+            setcookie("KLEFIU_loginSession", "", time()-(3600*24*365));
+            header('Location: ' . $app->utils()->getPanelURL() . 'login?next=' . urlencode($app->utils()->getReturnURL()) . '&action=sessionExpired');
+        } else {
+            header('Location: ' . $app->utils()->getPanelURL() . 'login?next=' . urlencode($app->utils()->getReturnURL()) . '&action=noLogin');
+        }
+    }
+    exit();
+}
+
+
+function getIncludeContent($filename, $data = []) {
+    if (is_file($filename)) {
+        ob_start();
+        require $filename;
+        return ob_get_clean();
+    }
+    return false;
+}
+
+
