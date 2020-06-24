@@ -6,9 +6,10 @@ namespace Klefiu\App;
 class SiteManager
 {
 
-    private $siteDB = [];
+    private $siteDB;
+    private $dynamicDB;
 
-    public function __construct($siteDB = [])
+    public function __construct($siteDB = [], $dynamicDB = [])
     {
         $this->siteDB = $siteDB;
     }
@@ -36,16 +37,30 @@ class SiteManager
         }
     }
 
+    public function getRequestPath()
+    {
+        return $_GET['rq'];
+    }
+
+    public function getSlicedPath($path)
+    {
+        return explode("/", $path);
+    }
+
     public function getSiteFile($requestPath = null)
     {
         if ($requestPath === null) {
-            if ($this->siteFileIsSet($this->r('path'))) {
-                return $this->siteDB[$this->r('path')];
+            $rq = $this->resolvePath($this->r('path'))[0];
+            if ($this->siteFileIsSet($rq)) {
+                $rq = $this->resolvePath($this->r('path'))[0];
+                return $this->siteDB[$rq];
             }
             return $this->siteDB[404];
         }
-        if ($this->siteFileIsSet($requestPath)) {
-            return $this->siteDB[$requestPath];
+        $rq = $this->resolvePath($requestPath)[0];
+        if ($this->siteFileIsSet($rq)) {
+            $rq = $this->resolvePath($requestPath)[0];
+            return $this->siteDB[$rq];
         }
         return $this->siteDB[404];
     }
@@ -53,6 +68,7 @@ class SiteManager
     public function setSiteFile($requestPath, $siteFile)
     {
         $this->siteDB[$requestPath] = $siteFile;
+        $this->dynamicDB[] = $requestPath;
     }
 
     public function siteFileIsSet($requestPath) {
@@ -79,8 +95,44 @@ class SiteManager
 
     public function getSiteDB()
     {
-        return $this->siteDB;
+        return array_merge($this->siteDB, $this->dynamicDB);
     }
+
+
+
+    public function resolvePath($requestPath)
+    {
+        $propablyArray = $this->dynamicDB;
+        for($i=0; isset($this->getSlicedPath($requestPath)[$i]); $i++) {
+            $propablyArray = $this->arrayKeyResolver($i, $requestPath, $propablyArray);
+        }
+
+        if (empty($propablyArray) || !isset($propablyArray)) {
+            return false;
+        }
+        return Func::sortArrayValueLengths($propablyArray);
+    }
+
+
+    private function arrayKeyResolver($depth, $requestPath, $propablyValues)
+    {
+        if (is_array($propablyValues)) {
+            foreach ($propablyValues as $path) {
+                if ($this->getSlicedPath($path)[$depth] == $this->getSlicedPath($requestPath)[$depth] || $this->getSlicedPath($path)[$depth] == '*') {
+                    $propablyArray[] = $path;
+                }
+            }
+            return $propablyArray;
+        }
+        return ['404'];
+    }
+
+
+
+
+
+
+
 
 
 
