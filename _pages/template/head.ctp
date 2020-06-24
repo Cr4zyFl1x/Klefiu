@@ -4,8 +4,9 @@
         <meta name="description" content="">
         <meta name="keywords" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#EF4153">
 
-        <link rel="icon" href="<?php echo $app->utils()->getPanelURL() . 'favicon.ico'; ?>favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/lavalite/img/brand.svg'; ?>" type="image/x-icon" />
 
         <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800" rel="stylesheet">
 
@@ -22,7 +23,13 @@
         <link rel="stylesheet" href="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/owl.carousel/dist/assets/owl.carousel.min.css'; ?>">
         <link rel="stylesheet" href="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/owl.carousel/dist/assets/owl.theme.default.min.css'; ?>">
         <link rel="stylesheet" href="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/lavalite/css/theme.min.css'; ?>">
+        <link rel="stylesheet" href="<?php echo $app->utils()->getPanelURL() . '_assets/klefiu/css/main.css'; ?>">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>window.jQuery || document.write('<script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/jquery/js/jquery-3.3.1.min.js'; ?>"><\/script>')</script>
+        <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/popper.js/dist/umd/popper.min.js'; ?>"></script>
+        <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/bootstrap/dist/js/bootstrap.min.js'; ?>"></script>
         <script type="text/javascript" src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/modernizr/js/modernizr-2.8.3.min.js'; ?>"></script>
+        <script type="text/javascript" src="<?php echo $app->utils()->getPanelURL() . '_assets/klefiu/js/main.js'; ?>"></script>
 
         <style>
             #loader {

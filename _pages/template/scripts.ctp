@@ -1,7 +1,4 @@
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        <script>window.jQuery || document.write('<script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/jquery/js/jquery-3.3.1.min.js'; ?>"><\/script>')</script>
-        <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/popper.js/dist/umd/popper.min.js'; ?>"></script>
-        <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/bootstrap/dist/js/bootstrap.min.js'; ?>"></script>
+<!-- // SCRIPTS // -->
         <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/perfect-scrollbar/dist/perfect-scrollbar.min.js'; ?>"></script>
         <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/screenfull/dist/screenfull.js'; ?>"></script>
         <script src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/datatables.net/js/jquery.dataTables.min.js'; ?>"></script>
