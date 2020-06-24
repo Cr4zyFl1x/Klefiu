@@ -17,18 +17,20 @@ CREATE TABLE IF NOT EXISTS `klefiu_users` (
 	`profilePicPath`    VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
     `permGroup`         INT NULL DEFAULT NULL,
 
-	`lastLoginAt`		TIMESTAMP NULL DEFAULT NULL,
-	`lastLoginIP`		VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+    `diskSpace`         INT(20) NULL DEFAULT '0',
+    `totalDownloads`    INT(20) NULL DEFAULT '0',
 
-	`passwordcode`		VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
-	`passwordcode_time`	TIMESTAMP NULL DEFAULT NULL,
+	`pwCode`    		VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+	`pwCode_time`   	TIMESTAMP NULL DEFAULT NULL,
 
+    `lastLoginAt`		TIMESTAMP NULL DEFAULT NULL,
     `createdAt`     timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updatedAt`     timestamp NULL DEFAULT NULL,
 
     PRIMARY KEY (`id`),
     UNIQUE (`email`),
-    UNIQUE (`username`)
+    UNIQUE (`username`),
+    UNIQUE (`pwCode`)
 
 ) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
 
@@ -43,10 +45,23 @@ CREATE TABLE IF NOT EXISTS `klefiu_settings` (
     UNIQUE (`settingID`)
 ) engine = innodb charset=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `klefiu_reloginTokens` (
+CREATE TABLE IF NOT EXISTS `klefiu_loginSessions` (
     `ID`                INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY,
     `userID`            INT(10) NULL DEFAULT NULL,
-    `identityToken`     VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
-    `secureToken`       VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+    `sessionToken`      VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
+    `userAgent`         VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+    `operatingSystem`   VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+    `ipAddress`         VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+    `sessionValidity`   INT(10) NULL DEFAULT NULL,
+    `createdAt`         timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (`sessionToken`)
+
+) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `klefiu_bannedIPs` (
+    `ID`                INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY,
+    `userID`            INT(10) NULL DEFAULT NULL,
+    `ipAddress`         VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
     `createdAt`         timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
