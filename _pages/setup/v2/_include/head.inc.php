@@ -5,7 +5,7 @@
         <meta name="author" content="">
         <!-- <link rel="icon" href="_assets/img/brand/favicon.png"> -->
 
-        <title>Setup wizard | UCMS</title>
+        <title>Setup wizard | KLEFIU</title>
 
         <!-- Bootstrap core CSS -->
         <link href="_assets/vendor/bootstrap-setup/css/bootstrap.min.css" rel="stylesheet">

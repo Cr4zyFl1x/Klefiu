@@ -1,5 +1,5 @@
 <?php
-if (!extension_loaded('pdo') || !extension_loaded('pdo_mysql') || !extension_loaded('curl') || !extension_loaded('json') || !extension_loaded('apcu') || !extension_loaded('mysqli') || !extension_loaded('geoip') || !extension_loaded('bcmath') || (phpversion() < 7.3) || PHP_OS !== 'Linux') {
+if (!extension_loaded('pdo') || !extension_loaded('pdo_mysql') || !extension_loaded('curl') || !extension_loaded('json') || !extension_loaded('apcu') || !extension_loaded('mysqli') || !extension_loaded('bcmath') || (phpversion() < 7.3) || PHP_OS !== 'Linux') {
     $error = true;
 }
 if (!is_writable('_storage/') || !is_writable('_include/config/mySQL.php'))
@@ -73,12 +73,6 @@ if (!is_writable('_storage/') || !is_writable('_include/config/mySQL.php'))
                                 <td>php-mysqli</td>
                                 <td><?php if (!extension_loaded('mysqli')) { echo "<span class='text-danger'>Not installed!</span>"; } else { echo "<span class='text-success'>OK</span>"; } ?></td>
                                 <td><span class="text-info"><a href="https://www.php.net/manual/en/mysqli.installation.php" target="_blank">Help page</a></span></td>
-                            </tr>
-                            <tr>
-                                <td><i class="fab fa-php"></i> PHP-Extension</td>
-                                <td>php-geoip</td>
-                                <td><?php if (!extension_loaded('geoip')) { echo "<span class='text-danger'>Not installed!</span>"; } else { echo "<span class='text-success'>OK</span>"; } ?></td>
-                                <td><span class="text-info"><a href="https://www.php.net/manual/en/geoip.installation.php" target="_blank">Help page</a></span></td>
                             </tr>
                             <tr>
                                 <td><i class="fab fa-php"></i> PHP-Extension</td>

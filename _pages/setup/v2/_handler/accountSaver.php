@@ -6,6 +6,7 @@ $form['status'] = "";
 $form['salutation'] = "m";
 
 use Klefiu\App\SQL;
+$sql = new SQL();
 
 if (isset($_GET['check'])) {
 
@@ -64,7 +65,7 @@ if (isset($_GET['check'])) {
 
 
     if (!$error) {
-        $statement = SQL::getPDO()->prepare("INSERT INTO klefiu_users (email, username, password, salutation, prename, lastname, street, zipCode, houseNumber, city, country, permGroup) VALUES (:email, :username, :password, :salutation, :prename, :lastname, :street, :zipCode, :houseNumber, :city, :country, :permGroup)");
+        $statement = $sql->getPDO()->prepare("INSERT INTO klefiu_users (email, username, password, salutation, prename, lastname, street, zipCode, houseNumber, city, country, permGroup) VALUES (:email, :username, :password, :salutation, :prename, :lastname, :street, :zipCode, :houseNumber, :city, :country, :permGroup)");
 
         $data = array(  'email'         => $form['email'],
                         'username'      => $form['username'],

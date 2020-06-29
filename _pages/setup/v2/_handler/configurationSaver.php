@@ -6,6 +6,7 @@ $form['status'] = "";
 
 // Use Namespace
 use Klefiu\App\SQL;
+$sql = new SQL();
 
 // Panel settings
 if (empty($_POST['panel_domainSSL'])) { $form['panel_domainSSL'] = getSiteSSL(2); } else { $form['panel_domainSSL'] = $_POST['panel_domainSSL']; }
@@ -45,7 +46,7 @@ if (isset($_GET['check'])) {
 
 
     if (!$error) {
-        $query = SQL::getPDO()->prepare("INSERT INTO klefiu_settings (settingNr, settingID, settingVal, settingDescription) VALUES (:settingNr, :settingID, :settingVal, :settingDescription)");
+        $query = $sql->getPDO()->prepare("INSERT INTO klefiu_settings (settingNr, settingID, settingVal, settingDescription) VALUES (:settingNr, :settingID, :settingVal, :settingDescription)");
         sleep(2);
 
         $result['panel_operatorName']               = $query->execute(array('settingNr' => 101, 'settingID' => "panel_operatorName", 'settingVal' => 'My Company, LLC.', 'settingDescription' => "Website operator -> string"));
@@ -86,6 +87,13 @@ if (isset($_GET['check'])) {
         $result['license_product']                  = $query->execute(array('settingNr' => 606, 'settingID' => "license_product", 'settingVal' => null, 'settingDescription' => "Licensed Product -> string"));
         $result['license_lastUpdate']               = $query->execute(array('settingNr' => 607, 'settingID' => "license_lastUpdate", 'settingVal' => null, 'settingDescription' => "Last time key changed -> string"));
         $result['license_lastDataUpdate']           = $query->execute(array('settingNr' => 608, 'settingID' => "license_lastDataUpdate", 'settingVal' => null, 'settingDescription' => "Last time Key Information fetched from license server -> string"));
+
+        $result['security_passwordMinLength']       = $query->execute(array('settingNr' => 701, 'settingID' => "security_passwordMinLength", 'settingVal' => 8, 'settingDescription' => "Minimum length of a password -> int"));
+        $result['security_passwordDigits']          = $query->execute(array('settingNr' => 702, 'settingID' => "security_passwordDigits", 'settingVal' => 'true', 'settingDescription' => "Digits needed in passwords -> string/boolean"));
+        $result['security_passwordSpecialChars']    = $query->execute(array('settingNr' => 703, 'settingID' => "security_passwordSpecialChars", 'settingVal' => 'false', 'settingDescription' => "Special Chars (@, %, $) needed in passwords -> string/boolean"));
+        $result['security_passwordCharsList']       = $query->execute(array('settingNr' => 704, 'settingID' => "security_passwordCharsList", 'settingVal' => '@, $, %, §, !, &', 'settingDescription' => "Special Chars required by 'security_passwordSpecialChars' -> string/boolean"));
+        $result['security_passwordUpperChars']      = $query->execute(array('settingNr' => 705, 'settingID' => "security_passwordUpperChars", 'settingVal' => 'true', 'settingDescription' => "Upper chars needed in password -> string/boolean"));
+        $result['security_sessionValidity']         = $query->execute(array('settingNr' => 706, 'settingID' => "security_sessionValidity", 'settingVal' => 3600, 'settingDescription' => "Max session time in seconds (Exc. rememberme) -> int"));
 
 
 
