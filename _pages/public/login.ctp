@@ -1,12 +1,13 @@
 <?php
-// Class definitions
-use Klefiu\App\SQL;
+require_once '_include/modules/login.module';
 ?>
 <!doctype html>
 <html class="no-js" lang="en">
     <head>
-        <title><?php echo $lng['login']['title'] . ' | ' . SQL::getSetting('panel_title'); ?></title>
+        <title><?php echo $lng['login']['title'] . ' | ' . $app->utils()->getSetting('panel_title'); ?></title>
         <?php require_once '_pages/template/head.ctp'; ?>
+
+        <?php if ($_GET['handler'] || $_GET['action']) { ?><script type="text/javascript">history.pushState(null, "", "<?php echo $app->utils()->getPanelURL() ."login"; if (!empty($_GET['next'])) { echo "?next=". urlencode($_GET['next']); } ?>");</script><?php } ?>
 
     </head>
 
@@ -33,25 +34,32 @@ use Klefiu\App\SQL;
                                 <a href="<?php echo $app->utils()->getPanelURL(); ?>"><img src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/lavalite/img/brand.svg'; ?>" alt=""></a>
                             </div>
                             <h3><?php echo $lng['login']['heading']; ?></h3>
-                            <p><?php echo $lng['login']['welcome']; ?></p>
-                            <form action="#!">
+                            <?php
+                                if (!$statusMsg) {
+                                    echo '<p>' . $lng['login']['welcome'] . '</p>';
+                                } else {
+                                    echo '<div id="statusMSG">' . $form['status'] . "</div>";
+                                }
+                            ?>
+
+                            <form method="post" action="<?php echo $app->utils()->getPanelURL() . 'login?handler=login'; if (!empty($_GET['next'])) echo "&next=". urlencode($_GET['next']); ?>">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="<?php echo $lng['login']['username']; ?>" required="" value="">
+                                    <input type="text" class="form-control" placeholder="<?php echo $lng['login']['username']; ?>" name="username" autocapitalize="off" autocomplete="off" required="" value="">
                                     <i class="ik ik-user"></i>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control" placeholder="<?php echo $lng['login']['password']; ?>" required="" value="">
+                                    <input type="password" class="form-control" placeholder="<?php echo $lng['login']['password']; ?>" name="password" autocomplete="off" autocapitalize="off" required="" value="">
                                     <i class="ik ik-lock"></i>
                                 </div>
                                 <div class="row">
                                     <div class="col text-left">
                                         <label class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="item_checkbox" name="item_checkbox" value="option1">
+                                            <input type="checkbox" class="custom-control-input" id="item_checkbox" name="rememberme" value="true">
                                             <span class="custom-control-label">&nbsp;<?php echo $lng['login']['rememberme']; ?></span>
                                         </label>
                                     </div>
                                     <div class="col text-right">
-                                        <a href="forgot-password.html"><?php echo $lng['login']['forgotpass']; ?></a>
+                                        <a href="<?php echo $app->utils()->getPanelURL() . 'forgot-password'; ?>"><?php echo $lng['login']['forgotpass']; ?></a>
                                     </div>
                                 </div>
                                 <div class="sign-btn text-center">
@@ -64,7 +72,6 @@ use Klefiu\App\SQL;
             </div>
         </div>
 
-        <!-- // SCRIPTS // -->
         <?php require_once '_pages/template/scripts.ctp'; ?>
 
     </body>

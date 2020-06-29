@@ -1,11 +1,11 @@
 <?php
-use Klefiu\App\SQL;
+http_response_code(404);
 ?>
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title><?php echo $lng['404']['title'] . ' | ' . SQL::getSetting('panel_title'); ?></title>
+        <title><?php echo $lng['404']['title'] . ' | ' . $app->utils()->getSetting('panel_title'); ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800" rel="stylesheet">
         <style>
