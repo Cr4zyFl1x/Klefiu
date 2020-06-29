@@ -3,7 +3,9 @@
 
 namespace Klefiu\App;
 
-class SiteManager
+use Klefiu\App;
+
+class SiteManager extends App
 {
 
     private $siteDB;
@@ -110,7 +112,12 @@ class SiteManager
         if (empty($propablyArray) || !isset($propablyArray)) {
             return false;
         }
-        return Func::sortArrayValueLengths($propablyArray);
+
+        if (in_array($requestPath, $propablyArray)) {
+            return [$requestPath];
+        }
+
+        return parent::utils()->sortArrayValueLengths($propablyArray);
     }
 
 

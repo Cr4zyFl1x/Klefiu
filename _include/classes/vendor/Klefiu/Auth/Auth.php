@@ -4,15 +4,16 @@
 namespace Klefiu\App;
 
 
+use Klefiu\App;
 use Klefiu\App\Auth\User;
 
-class Auth
+class Auth extends App
 {
     private $pdo;
 
     public function __construct()
     {
-        $this->pdo = SQL::getPDO();
+        $this->pdo = parent::sql()->getPDO();
     }
 
     public function userLogin($username, $password, $rememberme = false)
@@ -20,7 +21,7 @@ class Auth
         $return = ['data' => ['error' => [], 'success' => false]];
         $error = false;
 
-        $statement = SQL::getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') ."users WHERE username = :username");
+        $statement = parent::sql()->getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') ."users WHERE username = :username");
         $result = $statement->execute(['username' => $username]);
         $userData = $statement->fetch();
 
@@ -39,7 +40,7 @@ class Auth
             }
 
             if (!$error) {
-                $lastLoginAt = SQL::getPDO()->prepare("UPDATE ".Config::read('db_prefix')."users SET lastLoginAt = NOW() WHERE id = ?");
+                $lastLoginAt = parent::sql()->getPDO()->prepare("UPDATE ".Config::read('db_prefix')."users SET lastLoginAt = NOW() WHERE id = ?");
                 $lastLoginAt->execute([$userData['ID']]);
                 $session = $this->createSession($userData['ID'], $rememberme);
 
@@ -87,8 +88,8 @@ class Auth
         $sessionTime = ($rememberme) ? time()+(3600*24*365) : 0;
         $sessionValidity = ($rememberme) ? (3600*24*365) : (3600*2);
 
-        $statement = SQL::getPDO()->prepare("INSERT INTO " . Config::read('db_prefix') . "loginSessions (userID, sessionToken, userAgent, operatingSystem, ipAddress, sessionValidity) VALUES (:uID, :sT, :uA, :oS, :ip, :sV)");
-        $result = $statement->execute(['uID' => $userID, 'sT' => sha1($sessionToken), 'uA' => Func::getUserAgent(), 'oS' => Func::getOperatingSystem(), 'ip' => Func::getUserIP(), 'sV' => $sessionValidity]);
+        $statement = parent::sql()->getPDO()->prepare("INSERT INTO " . Config::read('db_prefix') . "loginSessions (userID, sessionToken, userAgent, operatingSystem, ipAddress, sessionValidity) VALUES (:uID, :sT, :uA, :oS, :ip, :sV)");
+        $result = $statement->execute(['uID' => $userID, 'sT' => sha1($sessionToken), 'uA' => parent::utils()->getUserAgent(), 'oS' => parent::utils()->getOperatingSystem(), 'ip' => parent::utils()->getUserIP(), 'sV' => $sessionValidity]);
         if ($result) {
             setcookie("KLEFIU_loginSession", $sessionToken, $sessionTime, '/');
             return [
@@ -110,7 +111,7 @@ class Auth
     public function deleteSession($session)
     {
         if ($this->sessionExists($session)) {
-            $statement = SQL::getPDO()->prepare("DELETE FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
+            $statement = parent::sql()->getPDO()->prepare("DELETE FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
             $result = $statement->execute([sha1($session)]);
             return [
                 'data' => [
@@ -129,16 +130,16 @@ class Auth
 
     private function sessionExists($session)
     {
-        $statement = SQL::getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
+        $statement = parent::sql()->getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
         $result = $statement->execute([sha1($session)]);
         $data = $statement->fetch();
         if ($data == null) return false;
         return true;
     }
 
-    private function getSession($sessionToken)
+    public function getSession($sessionToken)
     {
-        $statement = SQL::getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
+        $statement = parent::sql()->getPDO()->prepare("SELECT * FROM " . Config::read('db_prefix') . "loginSessions WHERE sessionToken = ?");
         $result = $statement->execute([sha1($sessionToken)]);
         return $statement->fetch();
     }
@@ -151,25 +152,43 @@ class Auth
         return false;
     }
 
-    public function getUser()
+    public function getUser($userID = null)
     {
-        if (!$this->checkLogin())
+        if ($userID == null && !$this->checkLogin())
         {
             return [
                 'data' => [
                     'success' => false,
-                    'error' => 'notloggedin'
+                    'error' => 'noUserID'
                 ]
             ];
+        }
+
+        if ($userID !== null) {
+            return new User($userID);
         }
         return new User($_SESSION['userID']);
     }
 
+    public function getUserID($emailUsername)
+    {
+        $statement = parent::sql()->getPDO()->prepare("SELECT ID FROM " . Config::read('db_prefix') . "users WHERE username = :emailUser OR email = :emailUser");
+        $result = $statement->execute(['emailUser' => $emailUsername]);
+        $userID = $statement->fetch()[0];
+        if (isset($userID) && !empty($userID)) {
+            return ['data' => ['error' => null, 'success' => true, 'userID' => $userID]];
+        }
+        return ['data' => ['error' => 'usernotfound', 'success' => false]];
+    }
 
 
     public function checkLogin()
     {
-        if (isset($_SESSION['userID']) || $this->sessionIsValid($_COOKIE['KLEFIU_loginSession'])) {
+        if ($this->sessionIsValid($_COOKIE['KLEFIU_loginSession'])) {
+
+            if (isset($_SESSION['userID'])) {
+                return true;
+            }
             $userID = $this->getSession($_COOKIE['KLEFIU_loginSession'])['userID'];
             if (!empty($userID)) {
                 $_SESSION['userID'] = $userID;
@@ -179,26 +198,40 @@ class Auth
         return false;
     }
 
+    public function emailExists($email)
+    {
+        return $this->getUserID($email)['data']['success'];
+    }
 
     public function checkForIPBan($ip, $userID)
     {
         return false;
     }
 
-
-    public function createUser()
+    public function createUser($username, $email, $password, $options = [])
     {
-
-    }
-
-    public function deleteUser()
-    {
-
-    }
-
-    public function user($userID)
-    {
-        return new User();
+        if (empty($username) || empty($email)) {
+            return ['data' => ['error' => 'nouseroremail', 'success' => false]];
+        }
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        $defaultVal = [
+            'salutation' => 'm',
+            'prename' => null,
+            'lastname' => null,
+            'street' => null,
+            'zipCode' => null,
+            'houseNumber' => null,
+            'city' => null,
+            'country' => null,
+            'permGroup' => parent::utils()->getSetting('panel_defaultUserGroup'),
+            'email' => $email,
+            'username' => $username,
+            'pw' => $password
+        ];
+        $executeArray = array_merge($defaultVal, $options);
+        $statement = parent::sql()->getPDO()->prepare("INSERT INTO " . Config::read('db_prefix') . "users (email, username, password, salutation, prename, lastname, street, zipCode, houseNumber, city, country, permGroup) VALUES (:email, :username, :pw, :salutation, :prename, :lastname, :street, :zipCode, :houseNumber, :city, :country, :permGroup)");
+        $result = $statement->execute($executeArray);
+        return ['data' => ['error' => null, 'success' => $result]];
     }
 
 

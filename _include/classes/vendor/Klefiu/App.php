@@ -20,6 +20,11 @@ class App
         $this->siteManager = new SiteManager();
     }
 
+    public function siteManager()
+    {
+        return new SiteManager();
+    }
+
     public function utils()
     {
         return new Utils();
