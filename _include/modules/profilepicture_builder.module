@@ -1,0 +1,17 @@
+<?php
+
+$include = [];
+
+if ($app->auth()->checkLogin()) {
+    if (!$app->auth()->getUser()->getProfilePictureData()) {
+        $include['content-type'] = 'image/jpg';
+        $include['image'] = '_storage/static/profile/user.jpg';
+    } else {
+        $include['content-type'] = $app->auth()->getUser()->getProfilePictureData()['content-type'];
+        $include['image'] = $app->auth()->getUser()->getProfilePictureData()['image'];
+    }
+    header('Content-type: ' . $include['content-type']);
+    readfile($include['image']);
+} else {
+    require_once $app->siteManager->getSiteFile('/error/404');
+}

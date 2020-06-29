@@ -1,0 +1,67 @@
+<?php
+$profilestatusMsg = false;
+$emailChange = false;
+
+if ($_GET['handler'] == 'profile-update') {
+
+    $form = [
+        'statusProfile' => null,
+        'statusMail' => null,
+        'prename' => (empty(trim($_POST['prename']))) ? null : trim($_POST['prename']),
+        'lastname' => (empty(trim($_POST['lastname']))) ? null : trim($_POST['lastname']),
+        'salutation' => trim($_POST['salutation']),
+        'email' => trim($_POST['email']),
+        'street' => (empty(trim($_POST['street']))) ? null : trim($_POST['street']),
+        'houseNumber' => (empty(trim($_POST['houseNumber']))) ? null : trim($_POST['houseNumber']),
+        'zipCode' => (empty(trim($_POST['zipCode']))) ? null : trim($_POST['zipCode']),
+        'city' => (empty(trim($_POST['city']))) ? null : trim($_POST['city']),
+        'country' => trim($_POST['country'])
+    ];
+
+    if ($app->auth()->getUser()->getEmail() !== $form['email'] && !empty($form['email'])) {
+        if ($app->auth()->emailExists($form['email'])) {
+            $profilestatusMsg = true;
+            $form['statusMail'] = "<div class=\"alert alert-danger\" role=\"alert\">".$lng['error']['emailuse']."</div>";
+        } else {
+            $emailValStatus = $app->auth()->getUser()->createEmailValidation($form['email']);
+            if ($emailValStatus['data']['success']) {
+                $data = [
+                    'app' => $app,
+                    'username' => $app->auth()->getUser()->getUsername(),
+                    'validationLink' => $app->utils()->getPanelURL() . 'app/verify-email/' . $emailValStatus['data']['emailCode'],
+                    'oldEmail' => $app->auth()->getUser()->getEmail(),
+                    'newEmail' => $form['email']
+                ];
+                $app->utils()->phpMailerSMTP($app->auth()->getUser()->getEmail(), $lng['email']['emailupdate'] . ' | ' . $app->utils()->getSetting('panel_title'), getIncludeContent('_storage/static/mail/html/validate_email.ctp', $data));
+                $profilestatusMsg = true;
+                $form['statusMail'] = "<div class=\"alert alert-success\" role=\"alert\">".$lng['success']['emailvalidationsent']."</div>";
+            }
+        }
+    }
+
+    if (empty($form['salutation']) || empty($form['country'])) {
+        $profilestatusMsg = true;
+        $form['statusProfile'] = "<div class=\"alert alert-danger\" role=\"alert\">".$lng['error']['emptyfield']."</div>";
+        $error = true;
+    }
+
+    if (!$error && ($app->auth()->getUser()->getPrename() !== $form['prename'] || $app->auth()->getUser()->getLastname() !== $form['lastname'] || $app->auth()->getUser()->getStreet() !== $form['street'] || $app->auth()->getUser()->getHouseNumber() !== $form['houseNumber'] || $app->auth()->getUser()->getCity() !== $form['city'] || $app->auth()->getUser()->getZipCode() !== $form['zipCode'])) {
+        if ($app->auth()->getUser()->updateProfile([
+            'prename' => $form['prename'],
+            'lastname' => $form['lastname'],
+            'salutation' => $form['salutation'],
+            'street' => $form['street'],
+            'houseNumber' => $form['houseNumber'],
+            'country' => $form['country'],
+            'city' => $form['city'],
+            'zipCode' => $form['zipCode']
+        ])) {
+            $profilestatusMsg = true;
+            $form['statusProfile'] = "<div class=\"alert alert-success\" role=\"alert\">".$lng['success']['profileupdate']."</div>";
+        } else {
+            $profilestatusMsg = true;
+            $form['statusProfile'] = "<div class=\"alert alert-success\" role=\"alert\">".$lng['error']['internalerror']."</div>";
+        }
+    }
+
+}
