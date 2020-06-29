@@ -1,12 +1,12 @@
 <?php
 session_start();
-require_once '_include/setup/setupResources.php';
-require_once '_include/classes/autoload.php';
-require_once '_include/config/mySQL.php';
-require_once '_storage/static/setup/setupInfo.php';
 $timezone = 'Europe/Berlin';
 $pagePath = $_GET['path'];
 $setupFile = '_storage/static/setup/setupInfo.php';
+require_once '_include/setup/setupResources.php';
+require_once '_include/classes/autoload.php';
+require_once '_include/config/mySQL.php';
+require_once $setupFile;
 
 
 if (!isset($setup['lastPathUpdate'])) {
