@@ -27,4 +27,17 @@ function getIncludeContent($filename, $data = []) {
     return false;
 }
 
+function deleteProfilePicture() {
+    global $app;
+    if ($app->auth()->checkLogin()) {
+        if ($app->auth()->getUser()->profilePictureIsSet()) {
+            $image = $app->auth()->getUser()->getProfilePictureData()['image'];
+            if (file_exists($image)) {
+                unlink($image);
+            }
+            $app->auth()->getUser()->setData('profilePic', null);
+        }
+    }
+}
+
 
