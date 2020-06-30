@@ -14,7 +14,7 @@ function updateSetupFile($filePath, $newSettings) {
 }
 
 // Changes the MySQL Configuration File
-function updateSQLConfig($db_host, $db_port, $db_user, $db_name, $db_pass) {
+function updateSQLConfig($db_host, $db_port, $db_user, $db_name, $db_pass, $db_prefix) {
     file_put_contents("_include/config/mySQL.php", "");
     $file = fopen("_include/config/mySQL.php","a");
     fwrite($file,"<?php"); fwrite($file,"\n");
@@ -37,7 +37,7 @@ function updateSQLConfig($db_host, $db_port, $db_user, $db_name, $db_pass) {
     fwrite($file,'Config::write(\'db_user\', \''.$db_user.'\');'); fwrite($file,"\n");
     fwrite($file,'Config::write(\'db_pass\', \''.$db_pass.'\');'); fwrite($file,"\n");
     fwrite($file,'Config::write(\'db_port\', '.$db_port.');'); fwrite($file,"\n");
-    fwrite($file,'Config::write(\'db_prefix\', \'klefiu_\');');
+    fwrite($file,'Config::write(\'db_prefix\', \''.$db_prefix.'\');');
     fwrite($file,"\n\r");
     fwrite($file,'// Set MySQL Connection as configured'); fwrite($file,"\n");
     fwrite($file,'define(\'MYSQL_CONFIGURED\', true);'); fwrite($file,"\n");

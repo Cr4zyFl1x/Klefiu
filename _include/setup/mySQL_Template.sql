@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `klefiu_users` (
+CREATE TABLE IF NOT EXISTS `{PREFIX}users` (
 
     `ID`            	        INT UNSIGNED NOT NULL auto_increment,
     `email`         	        VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `klefiu_users` (
 ) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
 
 
-CREATE TABLE IF NOT EXISTS `klefiu_settings` (
+CREATE TABLE IF NOT EXISTS `{PREFIX}settings` (
     `ID`                        INT UNSIGNED NULL DEFAULT NULL auto_increment,
     `settingNr`                 INT NULL DEFAULT NULL,
     `settingID`                 VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `klefiu_settings` (
     UNIQUE (`settingNr`)
 ) engine = innodb charset=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `klefiu_loginSessions` (
+CREATE TABLE IF NOT EXISTS `{PREFIX}loginSessions` (
     `ID`                INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY,
     `userID`            INT(10) NULL DEFAULT NULL,
     `sessionToken`      VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
@@ -66,14 +66,14 @@ CREATE TABLE IF NOT EXISTS `klefiu_loginSessions` (
 
 ) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `klefiu_bannedIPs` (
+CREATE TABLE IF NOT EXISTS `{PREFIX}bannedIPs` (
     `ID`                INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY,
     `userID`            INT(10) NULL DEFAULT NULL,
     `ipAddress`         VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
     `createdAt`         timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `klefiu_emailValidation` (
+CREATE TABLE IF NOT EXISTS `{PREFIX}emailValidation` (
     `ID`                INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY,
     `userID`            INT(10) NULL DEFAULT NULL,
     `mode`              VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `klefiu_emailValidation` (
 
 ) engine=innodb DEFAULT charset=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `klefiu_cronjobs` (
+CREATE TABLE IF NOT EXISTS `{PREFIX}cronjobs` (
     `ID`                INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY,
     `cronjobID`         INT(10) NULL DEFAULT NULL,
     `cronjobName`       VARCHAR(255) collate utf8_unicode_ci NULL DEFAULT NULL,
