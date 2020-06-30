@@ -3,7 +3,7 @@
                     <div class="sidebar-header">
                         <a class="header-brand" href="<?=$app->utils()->getPanelURL() . 'app'; ?>">
                             <div class="logo-img">
-                                <img src="<?= $app->utils()->getPanelURL() . '_assets/vendor/lavalite/img/brand-white.svg'; ?>" class="header-brand-img" alt="Klefiu">
+                                <img src="<?= $app->utils()->getPanelURL() . '_assets/klefiu/img/brand-cubic-white.png'; ?>" height="45px" class="header-brand-img" alt="Klefiu">
                             </div>
                             <span class="text-behance">&nbsp;</span>
                             <span class="text"><?= $app->utils()->getSetting('panel_navigationTitle'); ?></span>

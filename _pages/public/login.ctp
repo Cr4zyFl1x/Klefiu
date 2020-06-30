@@ -31,7 +31,7 @@ require_once '_include/modules/login.module';
                     <div class="col-xl-4 col-lg-6 col-md-7 my-auto p-0">
                         <div class="authentication-form mx-auto">
                             <div class="logo-centered">
-                                <a href="<?php echo $app->utils()->getPanelURL(); ?>"><img src="<?php echo $app->utils()->getPanelURL() . '_assets/vendor/lavalite/img/brand.svg'; ?>" alt=""></a>
+                                <a href="<?php echo $app->utils()->getPanelURL(); ?>"><img src="<?php echo $app->utils()->getPanelURL() . '_assets/klefiu/img/brand-cubic.png'; ?>" height="75px" alt=""></a>
                             </div>
                             <h3><?php echo $lng['login']['heading']; ?></h3>
                             <?php
