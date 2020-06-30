@@ -104,7 +104,7 @@ $lng['email']['emailupdate'] = 'E-Mail Adressen aktualisierung';
  */
 
 $lng['login']['title'] = 'Anmeldung';
-$lng['login']['heading'] = 'Bei Klefiu anmelden';
+$lng['login']['heading'] = 'Bei SarpexToolBox anmelden';
 $lng['login']['welcome'] = 'Hallo, schön Sie zu sehen!';
 $lng['login']['username'] = 'Benutzername';
 $lng['login']['password'] = 'Passwort';
