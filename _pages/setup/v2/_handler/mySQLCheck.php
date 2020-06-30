@@ -8,6 +8,7 @@ error_reporting(0);
 $form['db_host'] = "127.0.0.1";
 $form['db_user'] = "ucms_app";
 $form['db_name'] = "ucms_app";
+$form['db_prefix'] = "_stb";
 $form['db_port'] = 3306;
 
 if (constant('MYSQL_CONFIGURED')) {
@@ -15,6 +16,7 @@ if (constant('MYSQL_CONFIGURED')) {
     $form['db_user'] = Config::read('db_user');
     $form['db_name'] = Config::read('db_name');
     $form['db_port'] = Config::read('db_port');
+    $form['db_prefix'] = Config::read('db_prefix');
 }
 
 if (isset($_GET['connect'])) {
@@ -26,6 +28,7 @@ if (isset($_GET['connect'])) {
     $form['db_user'] = trim($_POST['db_user']);
     $form['db_pass'] = $_POST['db_pass'];
     $form['db_port'] = trim($_POST['db_port']);
+    $form['db_prefix'] = trim($_POST['db_prefix']);
 
     $run = true;
 
@@ -36,6 +39,6 @@ if (isset($_GET['connect'])) {
     }
 
     if (!$error) {
-        updateSQLConfig($form['db_host'], $form['db_port'], $form['db_user'], $form['db_name'], $form['db_pass']);
+        updateSQLConfig($form['db_host'], $form['db_port'], $form['db_user'], $form['db_name'], $form['db_pass'], $form['db_prefix']);
     }
 }

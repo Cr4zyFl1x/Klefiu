@@ -38,11 +38,18 @@ require_once '_handler/mySQLCheck.php';
                     <h4 class="mb-3">Connection details</h4>
                     <form class="needs-validation" novalidate method="post" action="setup.php?path=/setup/sql&connect">
                         <div class="row" onclick="reloadFormSQL()">
-                            <div class="col">
+                            <div class="col-8 col-md-8">
                                 <label for="db_host">Database host</label>
                                 <input type="text" class="form-control" id="db_host" name="db_host" placeholder="127.0.0.1" value="<?php echo $form['db_host']; ?>" required>
                                 <div class="invalid-feedback">
                                     Valid host is required.
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <label for="db_prefix">Database table prefix</label>
+                                <input type="text" class="form-control" id="db_prefix" name="db_prefix" placeholder="stb_" value="<?php echo $form['db_prefix']; ?>" required>
+                                <div class="invalid-feedback">
+                                    Valid prefix is required.
                                 </div>
                             </div>
                         </div>

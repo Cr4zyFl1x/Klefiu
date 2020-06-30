@@ -6,6 +6,7 @@ $form['status'] = "";
 
 // Use Namespace
 use Klefiu\App\SQL;
+use Klefiu\App\Config;
 $sql = new SQL();
 
 // Panel settings
@@ -46,7 +47,7 @@ if (isset($_GET['check'])) {
 
 
     if (!$error) {
-        $query = $sql->getPDO()->prepare("INSERT INTO klefiu_settings (settingNr, settingID, settingVal, settingDescription) VALUES (:settingNr, :settingID, :settingVal, :settingDescription)");
+        $query = $sql->getPDO()->prepare("INSERT INTO " . Config::read('db_prefix') ."settings (settingNr, settingID, settingVal, settingDescription) VALUES (:settingNr, :settingID, :settingVal, :settingDescription)");
         sleep(2);
 
         $result['panel_operatorName']               = $query->execute(array('settingNr' => 101, 'settingID' => "panel_operatorName", 'settingVal' => 'My Company, LLC.', 'settingDescription' => "Website operator -> string"));
