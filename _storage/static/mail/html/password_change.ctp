@@ -18,7 +18,7 @@
                                     <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templateHeader">
                                         <tr>
                                             <td valign="top" class="headerContent">
-                                                <a href="<?=$data['app']->utils()->getPanelURL(); ?>"><img src="<?=$data['app']->utils()->getPanelURL() . '_assets/vendor/lavalite/img/brand.svg'; ?>" style="max-height:75px;padding:20px;" id="headerImage" alt="Klefiu"></a>
+                                                <a href="<?=$data['app']->utils()->getPanelURL(); ?>"><img src="<?=$data['app']->utils()->getPanelURL() . '_assets/klefiu/img/brand.png'; ?>" style="max-height:75px;padding:20px;" id="headerImage" alt="Klefiu"></a>
                                             </td>
                                         </tr>
                                     </table>
